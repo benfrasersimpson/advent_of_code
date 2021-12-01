@@ -1,0 +1,8 @@
+[0m2021.07.28 21:31:55 INFO  Started: Metals version 0.10.5 in workspace '/Users/ben.simpson/personal/github/advent_of_code/day_seven' for client Visual Studio Code 1.58.2.[0m
+[0m2021.07.28 21:32:01 INFO  time: initialize in 5.59s[0m
+[0m2021.07.28 21:32:02 WARN  Build server is not auto-connectable.[0m
+[0m2021.07.28 21:32:02 WARN  no build tool detected in workspace '/Users/ben.simpson/personal/github/advent_of_code/day_seven'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.07.29 11:46:38 INFO  Started: Metals version 0.10.5 in workspace '/Users/ben.simpson/personal/github/advent_of_code/day_seven' for client Visual Studio Code 1.58.2.[0m
+[0m2021.07.29 11:46:39 INFO  time: initialize in 1.6s[0m
+[0m2021.07.29 11:46:41 WARN  Build server is not auto-connectable.[0m
+[0m2021.07.29 11:46:41 WARN  no build tool detected in workspace '/Users/ben.simpson/personal/github/advent_of_code/day_seven'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
