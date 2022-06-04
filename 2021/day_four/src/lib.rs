@@ -64,14 +64,21 @@ mod tests {
 #[derive(PartialEq, Debug)]
 struct Board {
     numbers: Vec<u8>,
-    board_size: u8,
+    board_size: usize,
 }
 
 impl Board {
     fn has_won(&self, called: &[u8]) -> bool {
-        self.numbers
-            .chunks(5)
-            .any(|row| row.iter().all(|cell| called.contains(cell)))
+        let rows = self.numbers
+            .chunks(self.board_size)
+            .any(|row| row.iter().all(|cell| called.contains(cell)));
+
+        let columns = (0..self.board_size).any(|offset| {
+            self.numbers.iter().skip(offset).step_by(self.board_size).all(|x| called.contains(x))
+        });
+
+
+        rows || columns
     }
 
     fn new(input: &str) -> Board {
