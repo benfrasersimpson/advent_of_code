@@ -59,6 +59,22 @@ mod tests {
 
         assert_eq!(expected, Board::new(input))
     }
+
+    #[test]
+    fn uncalled_numbers() {
+        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
+        let board = Board {
+            numbers: vec![
+                14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
+                12, 3, 7,
+            ],
+            board_size: 5,
+        };
+
+        let expected_uncalled = vec![10, 16, 15, 19, 18, 8, 26, 20, 22, 13, 6, 12, 3];
+
+        assert_eq!(board.uncalled_numbers(&called), expected_uncalled)
+    }
 }
 
 #[derive(PartialEq, Debug)]
@@ -95,5 +111,11 @@ impl Board {
             numbers: output,
             board_size: 5,
         }
+    }
+
+    fn uncalled_numbers(&self, called: &[u8]) -> Vec<u8> {
+        let mut uncalled = self.numbers.clone();
+        uncalled.retain(|x| !called.contains(x));
+        uncalled
     }
 }
