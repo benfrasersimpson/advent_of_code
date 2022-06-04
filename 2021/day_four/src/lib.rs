@@ -6,14 +6,32 @@ mod tests {
 
     #[test]
     fn has_won_winning_board() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+        let called: Vec<u8> = vec![17, 23, 2, 0, 14, 21, 24];
+        let expected = Board {
+            numbers: vec![
+                vec![14, 21, 17, 24, 4],
+                vec![10, 16, 15, 9, 19],
+                vec![18, 8, 23, 26, 20],
+                vec![22, 11, 13, 6, 5],
+                vec![2, 0, 12, 3, 7],
+            ],
+        };
+        assert!(expected.has_won(&called))
     }
 
     #[test]
     fn has_won_losing_board() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+        let called: Vec<u8> = vec![17, 23, 2, 0, 14, 21];
+        let expected = Board {
+            numbers: vec![
+                vec![14, 21, 17, 24, 4],
+                vec![10, 16, 15, 9, 19],
+                vec![18, 8, 23, 26, 20],
+                vec![22, 11, 13, 6, 5],
+                vec![2, 0, 12, 3, 7],
+            ],
+        };
+        assert!(!expected.has_won(&called))
     }
 
     #[test]
@@ -44,7 +62,7 @@ struct Board {
 }
 
 impl Board {
-    fn has_won(called: &[u8]) -> bool {
+    fn has_won(&self, called: &[u8]) -> bool {
         true
     }
 
