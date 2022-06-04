@@ -1,3 +1,4 @@
+use bitvec::vec::BitVec;
 use std::str::FromStr;
 
 #[cfg(test)]
@@ -6,7 +7,7 @@ mod tests {
 
     #[test]
     fn has_won_winning_board() {
-        let called: Vec<u8> = vec![17, 23, 2, 0, 14, 21, 24];
+        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
         let expected = Board {
             numbers: vec![
                 vec![14, 21, 17, 24, 4],
@@ -21,7 +22,7 @@ mod tests {
 
     #[test]
     fn has_won_losing_board() {
-        let called: Vec<u8> = vec![17, 23, 2, 0, 14, 21];
+        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21];
         let expected = Board {
             numbers: vec![
                 vec![14, 21, 17, 24, 4],
@@ -63,7 +64,9 @@ struct Board {
 
 impl Board {
     fn has_won(&self, called: &[u8]) -> bool {
-        true
+        self.numbers
+            .iter()
+            .any(|row| row.iter().all(|cell| called.contains(cell)))
     }
 
     fn new(input: &str) -> Board {
