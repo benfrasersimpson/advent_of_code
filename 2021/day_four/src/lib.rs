@@ -16,6 +16,19 @@ mod tests {
     }
 
     #[test]
+    fn has_won_winning_board_column() {
+        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 16, 6, 8];
+        let expected = Board {
+            numbers: vec![
+                14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
+                12, 3, 7,
+            ],
+            board_size: 5,
+        };
+        assert!(expected.has_won(&called))
+    }
+
+    #[test]
     fn has_won_losing_board() {
         let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21];
         let expected = Board {
