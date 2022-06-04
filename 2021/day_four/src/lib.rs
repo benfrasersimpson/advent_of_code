@@ -26,11 +26,11 @@ mod tests {
 
         let expected = Board {
             numbers: vec![
-                vec![14,21,17,24,4],
-                vec![10,16,15,9,19],
-                vec![18,8,23,26,20],
-                vec![22,11,13,6,5],
-                vec![2,0,12,3,7],
+                vec![14, 21, 17, 24, 4],
+                vec![10, 16, 15, 9, 19],
+                vec![18, 8, 23, 26, 20],
+                vec![22, 11, 13, 6, 5],
+                vec![2, 0, 12, 3, 7],
             ],
         };
 
@@ -38,9 +38,9 @@ mod tests {
     }
 }
 
-
+#[derive(PartialEq, Debug)]
 struct Board {
-    numbers: Vec<Vec<u8>>
+    numbers: Vec<Vec<u8>>,
 }
 
 impl Board {
@@ -49,12 +49,14 @@ impl Board {
     }
 
     fn new(input: &str) -> Board {
-        let output = input.lines().map(|line| line.split_whitespace().map(|x| u8::from_str(x))).collect::<Vec<Vec<Result<u8, Err>>>>();
-        Board{numbers: output}
+        let output = input
+            .lines()
+            .map(|line| {
+                line.split_whitespace()
+                    .map(|x| x.parse::<u8>().unwrap_or_default())
+                    .collect::<Vec<u8>>()
+            })
+            .collect::<Vec<Vec<u8>>>();
+        Board { numbers: output }
     }
 }
-
-
-
-
-
