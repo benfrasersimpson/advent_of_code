@@ -69,14 +69,18 @@ struct Board {
 
 impl Board {
     fn has_won(&self, called: &[u8]) -> bool {
-        let rows = self.numbers
+        let rows = self
+            .numbers
             .chunks(self.board_size)
             .any(|row| row.iter().all(|cell| called.contains(cell)));
 
         let columns = (0..self.board_size).any(|offset| {
-            self.numbers.iter().skip(offset).step_by(self.board_size).all(|x| called.contains(x))
+            self.numbers
+                .iter()
+                .skip(offset)
+                .step_by(self.board_size)
+                .all(|x| called.contains(x))
         });
-
 
         rows || columns
     }
