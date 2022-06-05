@@ -4,7 +4,7 @@ mod tests {
 
     #[test]
     fn has_won_winning_board_row() {
-        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
+        let called: Vec<u32> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
         let expected = Board {
             numbers: vec![
                 14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
@@ -17,7 +17,7 @@ mod tests {
 
     #[test]
     fn has_won_winning_board_column() {
-        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 16, 6, 8];
+        let called: Vec<u32> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 16, 6, 8];
         let expected = Board {
             numbers: vec![
                 14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
@@ -30,7 +30,7 @@ mod tests {
 
     #[test]
     fn has_won_losing_board() {
-        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21];
+        let called: Vec<u32> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21];
         let expected = Board {
             numbers: vec![
                 14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
@@ -62,7 +62,7 @@ mod tests {
 
     #[test]
     fn uncalled_numbers() {
-        let called: Vec<u8> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
+        let called: Vec<u32> = vec![7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24];
         let board = Board {
             numbers: vec![
                 14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
@@ -79,12 +79,12 @@ mod tests {
 
 #[derive(PartialEq, Debug)]
 struct Board {
-    numbers: Vec<u8>,
+    numbers: Vec<u32>,
     board_size: usize,
 }
 
 impl Board {
-    fn has_won(&self, called: &[u8]) -> bool {
+    fn has_won(&self, called: &[u32]) -> bool {
         let rows = self
             .numbers
             .chunks(self.board_size)
@@ -104,8 +104,8 @@ impl Board {
     fn new(input: &str) -> Board {
         let output = input
             .split_whitespace()
-            .map(|x| x.parse::<u8>().unwrap_or_default())
-            .collect::<Vec<u8>>();
+            .map(|x| x.parse::<u32>().unwrap_or_default())
+            .collect::<Vec<u32>>();
 
         Board {
             numbers: output,
@@ -113,9 +113,36 @@ impl Board {
         }
     }
 
-    fn uncalled_numbers(&self, called: &[u8]) -> Vec<u8> {
+    fn uncalled_numbers(&self, called: &[u32]) -> Vec<u32> {
         let mut uncalled = self.numbers.clone();
         uncalled.retain(|x| !called.contains(x));
         uncalled
     }
+}
+
+pub fn part_one(input: &str) -> Option<u32> {
+    let (called, boards) = input.split_once("\n\n").unwrap();
+
+    let called = called
+        .split(',')
+        .map(|x| x.parse::<u32>().unwrap_or_default())
+        .collect::<Vec<u32>>();
+
+    let boards = boards
+        .split("\n\n")
+        .map(|board| Board::new(board))
+        .collect::<Vec<Board>>();
+
+    (1..called.len()).find_map(|i| {
+        boards
+            .iter()
+            .find(|board| board.has_won(&called[0..=i]))
+            .map(|board| {
+                board
+                    .uncalled_numbers(&called[0..=i])
+                    .into_iter()
+                    .sum::<u32>()
+                    * called[i]
+            })
+    })
 }
