@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 #[cfg(test)]
 mod tests {
     use crate::Board;
@@ -145,4 +147,38 @@ pub fn part_one(input: &str) -> Option<u32> {
                     * called[i]
             })
     })
+}
+
+
+pub fn part_two(input: &str) -> Option<u32> {
+    let (called, boards) = input.split_once("\n\n").unwrap();
+
+    let called = called
+        .split(',')
+        .map(|x| x.parse::<u32>().unwrap_or_default())
+        .collect::<Vec<u32>>();
+
+    let boards = boards
+        .split("\n\n")
+        .map(|board| Board::new(board))
+        .collect::<Vec<Board>>();
+
+    let winning_move_number = boards.iter().map(|board| {
+        (1..called.len()).find(|i| board.has_won(&called[0..=*i])).unwrap()
+    }).collect::<Vec<usize>>();
+
+    let (last_winning_board_index, &move_num) = winning_move_number.iter()
+        .enumerate()
+        .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap_or(Ordering::Equal))
+        .map(|(index, move_num)| (index, move_num))
+        .unwrap();
+
+
+
+
+    let last_winning_board = boards.get(last_winning_board_index).unwrap();
+
+    let answer = last_winning_board.uncalled_numbers(&called[0..=move_num]).into_iter().sum::<u32>() * called[move_num];
+
+    Some(answer)
 }
