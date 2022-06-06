@@ -23,7 +23,7 @@ mod tests {
 
         assert_eq!(
             result,
-            Ok(crate::Line {
+            Ok(Line {
                 start: Point { x: 0, y: 9 },
                 end: Point { x: 5, y: 9 }
             })
@@ -43,6 +43,20 @@ mod tests {
             end: Point { x: 5, y: 8 }
         })
         .is_straight_line());
+    }
+
+    #[test]
+    fn test_get_line_coords() {
+        let line = Line::from("1,1 -> 1,3").unwrap();
+
+        assert_eq!(
+            vec![
+                Point { x: 1, y: 1 },
+                Point { x: 1, y: 2 },
+                Point { x: 1, y: 3 }
+            ],
+            line.get_line_coords()
+        );
     }
 }
 
@@ -64,6 +78,20 @@ impl Line {
 
     fn is_straight_line(&self) -> bool {
         self.start.x == self.end.x || self.start.y == self.end.y
+    }
+
+    fn get_line_coords(&self) -> Vec<Point> {
+        if self.start.x == self.end.x {
+            (self.start.y..=self.end.y)
+                .map(|y| Point { x: self.start.x, y })
+                .collect::<Vec<Point>>()
+        } else if self.start.y == self.end.y {
+            (self.start.x..=self.end.x)
+                .map(|x| Point { x, y: self.start.y })
+                .collect::<Vec<Point>>()
+        } else {
+            vec![]
+        }
     }
 }
 
