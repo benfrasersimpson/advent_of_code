@@ -1,36 +1,65 @@
+use crate::ParsingError::{CoordinateSplit, PointParse, PointSplit};
+use thiserror::Error;
+
+#[derive(Error, Debug, PartialEq)]
+pub enum ParsingError {
+    #[error("problem parsing value")]
+    PointParse(#[source] std::num::ParseIntError),
+    #[error("problem splitting point values")]
+    PointSplit,
+    #[error("problem splitting coordinate values")]
+    CoordinateSplit,
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::coords_to_line;
+    use crate::{coords_to_line, Point};
 
     #[test]
     fn test_coords_to_line() {
         let coords = "0,9 -> 5,9";
 
-        let ((x1, y1), (x2, y2)) = coords_to_line(coords);
+        let result = coords_to_line(coords);
 
-        assert_eq!(x1, 0);
-        assert_eq!(y1, 9);
-        assert_eq!(x2, 5);
-        assert_eq!(y2, 9);
+        assert_eq!(
+            result,
+            Ok(crate::Line {
+                start: Point { x: 0, y: 9 },
+                end: Point { x: 5, y: 9 }
+            })
+        );
     }
 }
 
-fn coords_to_line(input: &str) -> ((u32, u32),(u32, u32))  {
-    let (start, end) = input.split_once(" -> ").unwrap();
+#[derive(PartialEq, Debug)]
+struct Line {
+    start: Point,
+    end: Point,
+}
 
-    let (x1, y1) = start.split_once(",").map(|(x1, y1)| {
-        (
-            x1.parse::<u32>().unwrap_or_default(),
-            y1.parse::<u32>().unwrap_or_default(),
-        )
-    }).unwrap();
+impl Line {
+    fn from(input: &str) -> Result<Line, ParsingError> {
+        let (start, end) = input.split_once(" -> ").ok_or(CoordinateSplit)?;
 
-    let (x2, y2) = end.split_once(",").map(|(x2, y2)| {
-        (
-            x2.parse::<u32>().unwrap_or_default(),
-            y2.parse::<u32>().unwrap_or_default(),
-        )
-    }).unwrap();
+        let start = Point::from(start)?;
+        let end = Point::from(end)?;
 
-    ((x1,y1),(x2,y2))
+        Ok(Line { start, end })
+    }
+}
+
+#[derive(PartialEq, Debug)]
+struct Point {
+    x: u32,
+    y: u32,
+}
+
+impl Point {
+    fn from(input: &str) -> Result<Point, ParsingError> {
+        let (x, y) = input.split_once(",").ok_or(PointSplit)?;
+        let x = x.parse::<u32>().map_err(|e| PointParse(e))?;
+        let y = y.parse::<u32>().map_err(|e| PointParse(e))?;
+
+        Ok(Self { x, y })
+    }
 }
