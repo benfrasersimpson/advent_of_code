@@ -13,7 +13,7 @@ pub enum ParsingError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{part_one, Line, Point};
+    use crate::{part_one, part_two, Line, Point};
 
     #[test]
     fn test_coords_to_line() {
@@ -66,6 +66,15 @@ mod tests {
         let actual = part_one(input);
 
         assert_eq!(5, actual);
+    }
+
+    #[test]
+    fn test_part_two() {
+        let input = include_str!("test_input.txt");
+
+        let actual = part_two(input);
+
+        assert_eq!(12, actual);
     }
 }
 
@@ -174,7 +183,6 @@ pub fn part_two(input: &str) -> usize {
     let lines = input
         .lines()
         .filter_map(|line| Line::from(line).ok())
-        .filter(Line::is_straight_line)
         .map(|line| line.get_line_coords())
         .flatten()
         .collect::<Vec<Point>>();
