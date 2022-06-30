@@ -1,5 +1,4 @@
 use crate::ParsingError::{CoordinateSplit, PointParse, PointSplit};
-use std::ops::RangeInclusive;
 use thiserror::Error;
 
 #[derive(Error, Debug, PartialEq)]
@@ -14,7 +13,7 @@ pub enum ParsingError {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Line, part_one, Point};
+    use crate::{part_one, Line, Point};
 
     #[test]
     fn test_coords_to_line() {
@@ -90,25 +89,44 @@ impl Line {
         self.start.x == self.end.x || self.start.y == self.end.y
     }
 
-    fn gen_range(start: u32, end: u32) -> RangeInclusive<u32> {
+    fn gen_range(start: u32, end: u32) -> Vec<u32> {
         if start > end {
-            end..=start
+            (end..=start).into_iter().rev().collect::<Vec<u32>>()
         } else {
-            start..=end
+            (start..=end).collect::<Vec<u32>>()
         }
     }
 
     pub fn get_line_coords(&self) -> Vec<Point> {
-        if self.start.x == self.end.x {
-            Line::gen_range(self.start.y, self.end.y)
-                .map(|y| Point { x: self.start.x, y })
-                .collect::<Vec<Point>>()
-        } else if self.start.y == self.end.y {
-            Line::gen_range(self.start.x, self.end.x)
-                .map(|x| Point { x, y: self.start.y })
-                .collect::<Vec<Point>>()
+        if self.is_straight_line() {
+            if self.start.x == self.end.x {
+                let length = self.start.y.abs_diff(self.end.y) + 1;
+                let x_vals = vec![self.start.x; length as usize];
+
+                x_vals
+                    .into_iter()
+                    .zip(Line::gen_range(self.start.y, self.end.y))
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>()
+            } else {
+                let length = self.start.x.abs_diff(self.end.x) + 1;
+                let y_vals = vec![self.start.y; length as usize];
+
+                Line::gen_range(self.start.x, self.end.x)
+                    .into_iter()
+                    .zip(y_vals)
+                    .map(|(x, y)| Point { x, y })
+                    .collect::<Vec<Point>>()
+            }
         } else {
-            vec![]
+            let x_coords = Line::gen_range(self.start.x, self.end.x);
+            let y_coords = Line::gen_range(self.start.y, self.end.y);
+
+            x_coords
+                .into_iter()
+                .zip(y_coords)
+                .map(|(x, y)| Point { x, y })
+                .collect::<Vec<Point>>()
         }
     }
 }
@@ -138,7 +156,30 @@ pub fn part_one(input: &str) -> usize {
         .flatten()
         .collect::<Vec<Point>>();
 
-    let mut state: Vec<[u8; 1000]> = vec![[0u8;1000];1000];
+    let mut state: Vec<[u8; 1000]> = vec![[0u8; 1000]; 1000];
+
+    lines.iter().for_each(|point| {
+        state[point.y as usize][point.x as usize] += 1;
+    });
+
+    state
+        .into_iter()
+        .flatten()
+        .filter(|&cell| cell > 1)
+        .collect::<Vec<u8>>()
+        .len()
+}
+
+pub fn part_two(input: &str) -> usize {
+    let lines = input
+        .lines()
+        .filter_map(|line| Line::from(line).ok())
+        .filter(Line::is_straight_line)
+        .map(|line| line.get_line_coords())
+        .flatten()
+        .collect::<Vec<Point>>();
+
+    let mut state: Vec<[u8; 1000]> = vec![[0u8; 1000]; 1000];
 
     lines.iter().for_each(|point| {
         state[point.y as usize][point.x as usize] += 1;
